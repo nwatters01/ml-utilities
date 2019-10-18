@@ -9,7 +9,7 @@ import sys
 sys.path.append("../..")
 
 from absl.testing import absltest
-from src.configs import build_from_config
+from ml_utilities.configs import build_from_config
 
 
 class DummyClass(object):

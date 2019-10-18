@@ -10,7 +10,7 @@ sys.path.append("../..")
 
 from absl.testing import absltest
 from absl.testing import parameterized
-from src.configs import override_config
+from ml_utilities.configs import override_config
 import json
 
 
