@@ -1,4 +1,4 @@
-"""Tests for override_config."""
+"""Tests for src/configs/override_config.py."""
 
 from __future__ import absolute_import
 from __future__ import division

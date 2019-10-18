@@ -14,7 +14,7 @@ def build_from_config(x):
     "kwargs" items into a module built by constructor(*args, **kwargs). "args"
     and "kwargs" themselves may contain modules (also defined by dicts with
     "constructor").
-    
+
     Args:
         x: If dict containing "constructor", may contain only "constructor" and
             optionally "args" and "kwargs" items. Else is assumed to be a leaf
@@ -23,24 +23,25 @@ def build_from_config(x):
     Returns:
         Module constructed from x.
     """
-    if not isinstance(x, dict):
-        # Leaf node
-        logging.info('Returning non-dictionary {}.'.format(x))
-        return x
-    elif 'constructor' not in x:
-        # Leaf node
-        logging.info('Returning leaf dictionary {}.'.format(x))
-        return x
-    else:
-        # Not leaf node
-        constructor = x['constructor']
-        if 'args' in x:
-            args = tuple([build_from_config(v) for v in x['args']])
+    if isinstance(x, list):
+        return [build_from_config(i) for i in x]
+    elif isinstance(x, tuple):
+        return tuple([build_from_config(i) for i in x])
+    elif isinstance(x, dict):
+        if 'constructor' not in x:
+            return {k: build_from_config(v) for k, v in x.items()}
         else:
-            args = ()
-        if 'kwargs' in x:
-            kwargs = {k: build_from_config(v) for k, v in x['kwargs'].items()}
-        else:
-            kwargs = {}
-        logging.info('Constructor: {}.'.format(constructor))
-        return constructor(*args, **kwargs)
+            constructor = x['constructor']
+            if 'args' in x:
+                args = tuple([build_from_config(v) for v in x['args']])
+            else:
+                args = ()
+            if 'kwargs' in x:
+                kwargs = {k: build_from_config(v)
+                          for k, v in x['kwargs'].items()}
+            else:
+                kwargs = {}
+            logging.info('Constructor: {}.'.format(constructor))
+            return constructor(*args, **kwargs)
+    else:  # x has a type that we won't worry about
+        return x
