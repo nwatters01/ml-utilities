@@ -46,6 +46,9 @@ def override_config(config, overrides):
     Returns:
         Dictionary, config overridden according to override_dict.
     """
+    if not overrides:
+        return config
+
     for x in overrides:
         override_config_node(config, **x)
     return config
@@ -57,5 +60,7 @@ def override_config_from_json(config, json_overrides):
     This is the same as override_config(), except it takes a json serialization
     of the overrides.
     """
-    print(json.loads(json_overrides))
+    if not json_overrides:
+        return config
+
     return override_config(config, json.loads(json_overrides))
