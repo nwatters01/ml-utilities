@@ -50,12 +50,12 @@ def zipper(*sweeps):
 
 def write(sweeps, write_dir):
     """Write the sweeps to a file."""
-    logging.info(sweeps)
     logging.info('Starting to write files to {}.'.format(write_dir))
     os.makedirs(write_dir)
 
     for i, sweep in enumerate(sweeps):
         write_filename = os.path.join(write_dir, str(i) + '.txt')
+        logging.info('Dictionary: {}'.format(sweep))
         logging.info(
             'Writing dictionary {} to file {}.'.format(i, write_filename))
         write_file = open(write_filename, "w")
