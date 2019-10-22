@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 from absl import logging
+import tensorflow as tf
 
 
 def build_from_config(x):
@@ -29,7 +30,11 @@ def build_from_config(x):
         return tuple([build_from_config(i) for i in x])
     elif isinstance(x, dict):
         if 'constructor' not in x:
-            return {k: build_from_config(v) for k, v in x.items()}
+            output = {}
+            for k, v in x.items():
+                with tf.name_scope(k):
+                    output[k] = build_from_config(v)
+            return output
         else:
             constructor = x['constructor']
             if 'args' in x:
