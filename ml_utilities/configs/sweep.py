@@ -13,6 +13,9 @@ from __future__ import division
 from __future__ import print_function
 
 import copy
+import os
+import json
+from absl import logging
 
 
 def discrete(node, values):
@@ -43,3 +46,24 @@ def product(*sweeps):
 def zipper(*sweeps):
     """Zip of sweeps, all of which should have the same length."""
     return zip(*sweeps)
+
+
+def write(sweeps, write_dir):
+    """Write the sweeps to a file."""
+    logging.info(sweeps)
+    logging.info('Starting to write files to {}.'.format(write_dir))
+    os.makedirs(write_dir)
+
+    for i, sweep in enumerate(sweeps):
+        write_filename = os.path.join(write_dir, str(i) + '.txt')
+        logging.info(
+            'Writing dictionary {} to file {}.'.format(i, write_filename))
+        write_file = open(write_filename, "w")
+        # Must replace double quotes from json dump by single quotes, because
+        # double quotes will be removed by flag string-loading on openmind.
+        s = json.dumps(sweep)
+        s = s.replace('"', "'")
+        write_file.write(s)
+        write_file.close()
+
+    logging.info('Finished!')
