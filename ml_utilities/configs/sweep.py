@@ -16,6 +16,7 @@ import copy
 import os
 import json
 from absl import logging
+import itertools
 
 
 def discrete(node, values):
@@ -45,7 +46,7 @@ def product(*sweeps):
 
 def zipper(*sweeps):
     """Zip of sweeps, all of which should have the same length."""
-    return zip(*sweeps)
+    return [list(itertools.chain(*x)) for x in zip(*sweeps)]
 
 
 def write(sweeps, write_dir):
