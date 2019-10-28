@@ -94,7 +94,7 @@ def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
             new_log_dir += '_'
             new_log_dir += str(var['value'])
             new_log_dir += ';'
-        new_log_dir.pop[-1]
+        new_log_dir = new_log_dir[:-1]  # Remove the last ";"
         log_dir_sweep.append(new_log_dir)
     
     sweep = zipper(
