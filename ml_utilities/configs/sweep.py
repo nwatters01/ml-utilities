@@ -12,11 +12,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import copy
-import os
-import json
 from absl import logging
+import copy
 import itertools
+import json
+import os
 
 
 def discrete(node, values):
@@ -68,3 +68,35 @@ def write(sweeps, write_dir):
         write_file.close()
 
     logging.info('Finished!')
+
+
+def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
+    """Add log_dir sweep to a sweep of other parameters.
+
+    Args:
+        sweep: A sweep of some parameters. This should be a sweep of all of the
+            parameters that are varying in the sweep (i.e. should not include
+            parameters that are constant across the sweep) to ensure that the
+            log directories are as short as possible while being unique per
+            sweep element.
+        log_dir_base: String. Base of the log directory.
+        key: String. Optional key for the log_dir param of the sweep. Defaults
+            to "log_dir".
+
+    Returns:
+        log_dir_sweep.
+    """
+    log_dir_sweep = []
+    for s in sweep:
+        new_log_dir = copy.copy(log_dir_base)
+        for var in s:
+            new_log_dir += var['node'][-1]
+            new_log_dir += '_'
+            new_log_dir += str(var['value'])
+            new_log_dir += ';'
+        log_dir_sweep.append(new_log_dir)
+    
+    sweep = zipper(
+        sweep, discrete(('key',), log_dir_sweep)
+    )
+    return sweep
