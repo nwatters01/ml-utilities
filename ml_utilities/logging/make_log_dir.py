@@ -31,18 +31,24 @@ def make_log_dir(log_dir='logs', make_subdir=False):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
+    list_log_dir = os.listdir(log_dir)
+
     if make_subdir:
         # Find most recent log subdir, and log to the next numeral
-        most_recent_log_dir = max([int(filename)
-                                   for filename in os.listdir(log_dir)])
-        log_dir = os.path.join(log_dir, str(most_recent_log_dir + 1))
+        existing_log_subdirs = [
+            int(filename) for filename in list_log_dir if filename.isdigit()]
+        if existing_log_subdirs:
+            new_log_subdir = str(max(existing_log_subdirs) + 1)
+        else:
+            new_log_subdir = '0'
+        log_dir = os.path.join(log_dir, new_log_subdir)
         os.makedirs(log_dir)
     else:
-        if os.listdir(log_dir):
+        if list_log_dir:
             raise ValueError(
                 'logdir {} is not empty. Please specify a new directory for '
                 'logging or use make_subdirs=True.'.format(log_dir))
-        
+
     # Write to log file
     log_filename = os.path.join(log_dir, 'log.log')
     logging.info('Log filename: {}'.format(log_filename))
