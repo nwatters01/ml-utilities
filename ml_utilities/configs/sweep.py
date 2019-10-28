@@ -97,6 +97,6 @@ def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
         log_dir_sweep.append(new_log_dir)
     
     sweep = zipper(
-        sweep, discrete(('key',), log_dir_sweep)
+        sweep, discrete((key,), log_dir_sweep)
     )
     return sweep
