@@ -10,17 +10,14 @@ import tensorflow as tf
 
 def build_from_config(x):
     """Build module from config.
-
     Converts a dictionary with keys "constructor" and optionally "args" and
     "kwargs" items into a module built by constructor(*args, **kwargs). "args"
     and "kwargs" themselves may contain modules (also defined by dicts with
     "constructor").
-
     Args:
         x: If dict containing "constructor", may contain only "constructor" and
             optionally "args" and "kwargs" items. Else is assumed to be a leaf
             node.
-
     Returns:
         Module constructed from x.
     """
@@ -29,14 +26,9 @@ def build_from_config(x):
     elif isinstance(x, tuple):
         return tuple([build_from_config(i) for i in x])
     elif isinstance(x, dict):
-        if 'constructor' not in x:
-            output = {}
-            for k, v in x.items():
-                with tf.name_scope(k):
-                    output[k] = build_from_config(v)
-            return output
-        else:
-            constructor = x['constructor']
+        if 'constructor' in x:
+            constructor = build_from_config(x['constructor'])
+
             if 'args' in x:
                 args = tuple([build_from_config(v) for v in x['args']])
             else:
@@ -48,5 +40,15 @@ def build_from_config(x):
                 kwargs = {}
             logging.info('Constructor: {}.'.format(constructor))
             return constructor(*args, **kwargs)
+        elif 'module' in x:
+            module = importlib.import_module(x['module'])
+            method = getattr(module, x['method'])
+            return method
+        else:
+            output = {}
+            for k, v in x.items():
+                with tf.name_scope(k):
+                    output[k] = build_from_config(v)
+            return output
     else:  # x has a type that we won't worry about
         return x
