@@ -44,10 +44,11 @@ def make_log_dir(log_dir='logs', make_subdir=False):
         log_dir = os.path.join(log_dir, new_log_subdir)
         os.makedirs(log_dir)
     else:
-        if list_log_dir:
+        if 'log.log' in list_log_dir:
             raise ValueError(
-                'logdir {} is not empty. Please specify a new directory for '
-                'logging or use make_subdirs=True.'.format(log_dir))
+                'logdir {} already contains a "log.log" file. Please specify a '
+                'new directory for logging or use make_subdirs=True.'.format(
+                    log_dir))
 
     # Write to log file
     log_filename = os.path.join(log_dir, 'log.log')
