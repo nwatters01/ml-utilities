@@ -45,6 +45,8 @@ def build_from_config(x):
             module = importlib.import_module(x['module'])
             method = getattr(module, x['method'])
             return method
+        elif 'choice' in x:
+            return build_from_config(x['options'][x['choice']])
         else:
             output = {}
             for k, v in x.items():
