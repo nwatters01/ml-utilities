@@ -72,7 +72,6 @@ def write(sweeps, write_dir):
 
 def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
     """Add log_dir sweep to a sweep of other parameters.
-
     Args:
         sweep: A sweep of some parameters. This should be a sweep of all of the
             parameters that are varying in the sweep (i.e. should not include
@@ -82,7 +81,6 @@ def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
         log_dir_base: String. Base of the log directory.
         key: String. Optional key for the log_dir param of the sweep. Defaults
             to "log_dir".
-
     Returns:
         log_dir_sweep.
     """
@@ -92,15 +90,14 @@ def add_log_dir_sweep(sweep, log_dir_base, key='log_dir'):
         for var in s:
             new_log_dir += var['node'][-1]
             new_log_dir += '_'
-            new_log_dir += str(var['value'])
+            str_value = str(var['value'])
             str_value = str_value.replace(' ', '')
             str_value = str_value.replace('[', '_')
             str_value = str_value.replace(']', '_')
+            new_log_dir += str_value
             new_log_dir += '_'
         new_log_dir = new_log_dir[:-1]  # Remove the last ";"
         log_dir_sweep.append(new_log_dir)
     
-    sweep = zipper(
-        sweep, discrete((key,), log_dir_sweep)
-    )
+    sweep = zipper(sweep, discrete((key,), log_dir_sweep))
     return sweep
