@@ -6,7 +6,6 @@ from __future__ import print_function
 
 from absl import logging
 import importlib
-import tensorflow as tf
 
 
 def build_from_config(x):
@@ -50,8 +49,7 @@ def build_from_config(x):
         else:
             output = {}
             for k, v in x.items():
-                with tf.name_scope(k):
-                    output[k] = build_from_config(v)
+                output[k] = build_from_config(v)
             return output
     else:  # x has a type that we won't worry about
         return x
