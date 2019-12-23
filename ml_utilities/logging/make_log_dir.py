@@ -1,4 +1,4 @@
-"""Create a directory for logging."""
+"""Methods for creating logging directories and redirecting logs."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -11,30 +11,27 @@ import os
 # pylint: disable=no-member
 
 
-def make_log_dir(log_dir='logs', make_subdir=False):
+def create_log_dir(log_dir='logs', make_subdir=False):
     """Make logging directory and copy logs to a log.log file in it.
 
     Args:
-        log_dir: directory relative to the code path in which to write
-            the logs.
+        log_dir: directory relative to the code path in which to create the
+            directory.
         make_subdir: Bool. Whether to write the logs in a sub-directory of
             log_dir. This is useful if you want to use the same log_dir for
             multiple runs. If True, the sub-directories will be numerals,
-            starting from 1.
+            starting from 0.
 
     Returns:
-        log_dir: Path to the log file itself.
+        log_dir: Path to the log directory.
     """
-    reload(logging)
-    logging.getLogger().setLevel(logging.DEBUG)
-
+    
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    list_log_dir = os.listdir(log_dir)
-
     if make_subdir:
         # Find most recent log subdir, and log to the next numeral
+        list_log_dir = os.listdir(log_dir)
         existing_log_subdirs = [
             int(filename) for filename in list_log_dir if filename.isdigit()]
         if existing_log_subdirs:
@@ -43,19 +40,25 @@ def make_log_dir(log_dir='logs', make_subdir=False):
             new_log_subdir = '0'
         log_dir = os.path.join(log_dir, new_log_subdir)
         os.makedirs(log_dir)
-    else:
-        if 'log.log' in list_log_dir:
-            raise ValueError(
-                'logdir {} already contains a "log.log" file. Please specify a '
-                'new directory for logging or use make_subdirs=True.'.format(
-                    log_dir))
 
-    # Write to log file
-    log_filename = os.path.join(log_dir, 'log.log')
-    logging.info('Log filename: {}'.format(log_filename))
-    handler = logging.FileHandler(log_filename)
+    logging.info('Log directory: {}'.format(log_dir))
+    
+    return log_dir
+
+
+def redirect_logs(log_dir, log_filename='log.log'):
+    """Redirect logging to custom file.
+
+    Args:
+        log_dir: String. Directory relative to the code path in which to write
+            the logs.
+        log_filename: String. Filename in which to write the logs.
+    """
+    reload(logging)
+    logging.getLogger().setLevel(logging.DEBUG)
+    log_path = os.path.join(log_dir, 'log.log')
+    logging.info('Log path: {}'.format(log_path))
+    handler = logging.FileHandler(log_path)
     logging.getLogger().addHandler(handler)
 
-    logging.info('Log filename: {}'.format(log_filename))
-
-    return log_dir
+    return
